@@ -1,0 +1,149 @@
+<?php
+session_start();
+if(!isset($_SESSION['favoritos'])){
+	$_SESSION['favoritos']=[];
+}
+function esFavorito($id){
+	return in_array($id,$_SESSION['favoritos']);
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Boton favorito con AJAX</title>
+	<meta charset="utf-8">
+	<style>
+		#productos{
+			width: 700px;
+			margin: 0 auto;
+		}
+		.producto{
+			border: 1px solid black; /*creo una clase*/
+			margin: 10px;
+			padding: 10px;
+		}
+		button.favorito, button.nofavorito{
+			background: #0000ff;
+			color:white;
+			text-align: center;
+			width: 100px;
+		}
+		button.favorito{
+			display: inline; /*con esto prendo el boton*/
+		}
+		button.nofavorito{
+			display: none; /*lo mantengo apagado*/
+		}
+		button.favorito:hover, button.nofavorito:hover{
+			background:#000099;
+		}
+		.favoritoEstado button.favorito{
+			display:none;
+		}
+		.favoritoEstado button.nofavorito{
+			display:inline;
+		}
+		.favoritoEstado .marca{
+			display:block;
+		}
+		.marca{
+			color:red;
+			font-size: 2em;
+			float:right;
+			display: none;
+		}
+	</style>
+	<script>    /*hago los listeners*/
+		window.onload = function(){
+			var botones = document.getElementsByClassName("favorito"); /*traigo todos los elementos que se llamen favorito*/
+			for (var i = 0; i < botones.length; i++){
+				botones.item(i).addEventListener("click",favorito); /*El evento click lo mando a la funcion favorito*/
+			}
+			var botones = document.getElementsByClassName("nofavorito");
+			for (var i = 0; i < botones.length; i++){
+				botones.item(i).addEventListener("click",nofavorito);
+		}
+	}
+
+	function favorito(){
+		var producto = this.parentElement;
+
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST","favorito.php",true);
+		xhr.setRequestHeader('Content-type', 'XMLHttpRequest');
+		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+		xhr.send("id="+producto.id);
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState == 4 && xhr.status == 200){
+				var r = xhr.responseText;
+				if(r=="OK"){
+					producto.classList.add("favoritoEstado");
+				}
+			}
+		}
+	}
+	function nofavorito(){
+		var producto = this.parentElement;
+
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST","nofavorito.php",true);
+		xhr.setRequestHeader('Content-type', 'XMLHttpRequest');
+		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+		xhr.send("id="+producto.id);
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState == 4 && xhr.status == 200){
+				var r = xhr.responseText;
+				if(r=="OK"){
+					producto.classList.remove("favoritoEstado");
+				}
+			}
+		}
+	}
+	</script>
+
+</head>
+<body>
+<div id="productos">
+	<div id="poema-1" class="producto" >?php if(esFavorito(1)){ print 'favoritoEstado'; } ?>" >
+		<span class="marca">&hearts;</span>
+		<h3>poema 1</h3>
+		<p>“¿Qué es la Vida? La vida es una gota de rocío al amanecer que se desvanece
+			en el cielo al mediodía. Cae en lluvia al atardecer para fundirse con el mar
+			al anochecer”.
+		</p>
+		<button class="favorito">Favorito</button>
+		<button class="nofavorito">No Favorito</button>
+		</div>
+		<div id="poema-2" class="producto" >?php if(esFavorito(2)){ print 'favoritoEstado'; } ?>" >
+		<span class="marca">&hearts;</span>
+		<h3>poema 2</h3>
+		<p>Más allá de la noche que me cubre, negra como el abismo insondable, 
+			doy gracias a los dioses que puedan existir por mi alma inconquistable.
+			En la azarosas garras de las circunstancias no he gemido ni llorado.
+			Sometido a los golpes del azar mi cabeza sangra, pero está erguida.
+			Más allá de este lugar de ira y llantos yace sino el horror de la sombra,
+			Y aún la amenaza de los años me halla y me hallará sin temor.
+			No importa cuán estrecha sea la puerta, cuán cargada de castigos la sentencia,
+			soy el amo de mi destino, soy el capitán de mi alma.
+		</p>
+		<button class="favorito">Favorito</button>
+		<button class="nofavorito">No Favorito</button>
+		</div>
+		<div id="poema-3" class="producto" >?php if(esFavorito(3)){ print 'favoritoEstado'; } ?>" >
+		<span class="marca">&hearts;</span>
+		<h3>poema 3</h3>
+		<p>Un tiempo vendrá en el que, con gran alegría, te saludarás a ti mismo,
+			al tú que llega a tu puerta, al que ves en tu espejo y cada uno sonreirá a la bienvenida del otro,
+			y dirá, siéntate aquí. Come. Seguirás amando al extraño que fuiste tú mismo.
+			Ofrece vino, Ofrece pan. Devuelve tu amor a ti mismo, al extraño que te amó
+			toda tu vida, a quien no has conocido para conocer a otro corazón que te conoce de memoria.
+			Recoge las cartas del escritorio, las fotografías, las desesperadas líneas,
+			despega tu imagen del espejo. Siéntate. Celebra tu vida.
+		</p>
+		<button class="favorito">Favorito</button>
+		<button class="nofavorito">No Favorito</button>
+		</div>
+		</div>
+</body>
+</html>
