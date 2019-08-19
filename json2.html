@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Json 2</title>
+	<script>
+		var xmlhttp = new XMLHttpRequest(); //El objeto con el que vamos a leer
+		var url = "alumnos.json";
+
+
+		xmlhttp.onreadystatechange = function(){ //Nos va a avisar cuando hayamos podido leer la información
+
+			if(xmlhttp.readyState == 4 && xmlhttp.status = 200){ //200 quiere decir que fue exitoso, 400 que fue errado
+				var alumnos = JSON.parse(xmlhttp.responseText);
+				despliegaAlumnos(alumnos);
+
+			}
+
+		}
+
+
+		xmlhttp.open("GET",url,true); 
+		xmlhttp.send(); //Para enviar la solicitud
+
+
+		function despliegaAlumnos(arreglo){ //Siempre ponemos la función debajo del envío de información
+			alert("Todo bien");
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>
